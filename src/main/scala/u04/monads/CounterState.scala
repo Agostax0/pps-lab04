@@ -7,9 +7,11 @@ trait CounterState:
   def initialCounter(): Counter
   def inc(): State[Counter, Unit]
   def dec(): State[Counter, Unit]
+  def set(v: Int): State[Counter, Unit]
   def reset(): State[Counter, Unit]
   def get(): State[Counter, Int]
   def nop(): State[Counter, Unit]
+
 
 object CounterStateImpl extends CounterState:
   opaque type Counter = Int
@@ -19,6 +21,7 @@ object CounterStateImpl extends CounterState:
   // giving (new_counter, result)
   def inc(): State[Counter, Unit] = State(i => (i + 1, ()));
   def dec(): State[Counter, Unit] = State(i => (i - 1, ()));
+  def set(v: Int): State[Counter, Unit] = State(i => (v, ()));
   def reset(): State[Counter, Unit] = State(i => (0, ()));
   def get(): State[Counter, Int] = State(i => (i, i));
   def nop(): State[Counter, Unit] = State(i => (i, ()));
@@ -47,9 +50,10 @@ object CounterStateImpl extends CounterState:
       _ <- inc()
       _ <- reset()
       _ <- increment(5)
+      _ <- set(9)
       v <- get()
       _ <- reset()
     yield v
 
   println:
-    session.run(initialCounter())  // (5, 0)  
+    session.run(initialCounter())  // (9, 0)
