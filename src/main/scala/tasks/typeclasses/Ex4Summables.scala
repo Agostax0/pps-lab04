@@ -18,14 +18,25 @@ object Ex4Summables:
     def sum(a1: A, a2: A): A
     def zero: A
 
-  def sumAll[A: Summable](seq: Sequence[A]) =
+  def sumAll[A: Summable](seq: Sequence[A]): A =
     val summable = summon[Summable[A]]
-    ???  // complete here
+    seq match
+      case Cons(h, t) => summable.sum(h, sumAll(t))
+      case _ => summable.zero
+  // complete here
 
   given Summable[Int] with
     def sum(a1: Int, a2: Int): Int = a1 + a2
     def zero: Int = 0
-  
+
+
+  given Summable[Double] with
+    override def sum(a1: Double, a2: Double): Double = a1 + a2
+    override def zero: Double = 0.0
+
+  given Summable[String] with
+    override def sum(a1: String, a2: String): String = a1 + a2
+    override def zero: String = ""
   // write givens for Summable[Double] and Summable[String]
 
   @main def trySummables =
@@ -33,18 +44,15 @@ object Ex4Summables:
     println:
       sumAllInt(si) // 60
 
-    /* uncomment from here   
 
     println:
       sumAll(si) // 60
 
-    val sd = Cons(10.0, Cons(20.0, Cons(30.0, Nil())))  
+    val sd = Cons(10.0, Cons(20.0, Cons(30.0, Nil())))
     println:
       sumAll(sd) // 60.0
 
-    val ss = Cons("10", Cons("20", Cons("30", Nil())))  
+    val ss = Cons("10", Cons("20", Cons("30", Nil())))
     println:
       sumAll(ss) // "102030"
-
-    */  
 
